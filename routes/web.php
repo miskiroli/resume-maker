@@ -13,7 +13,7 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/{any?}', function () {
     return view('welcome');
 });
 

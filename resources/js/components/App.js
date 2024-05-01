@@ -1,46 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
-import Resume from './Resume';
+import Profile from './Profile';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get('/check-auth');
         setAuthenticated(response.data.authenticated);
+        setUser(response.data.user);
       } catch (error) {
         console.error('Error checking authentication:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     checkAuth();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
+  
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setAuthenticated(true);
   }
 
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login onLogin={handleLogin} />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/resume"
-          element={authenticated ? <Resume /> : <Navigate to="/login" />}
-        />
+        {authenticated ? (
+          <Route path="/profile" element={<Profile user={user} />} />
+        ) : (
+          <Route path="/profile" element={<Login onLogin={handleLogin} />} />
+        )}
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
 export default App;
+
+if (document.getElementById('app')) {
+  ReactDOM.render(<App />, document.getElementById('app'));
+}
