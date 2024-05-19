@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'token', // Vagy más autentikációs meghajtó, például 'passport'
+            'provider' => 'users',
+        ],
     ],
 
     /*
