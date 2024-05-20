@@ -46,7 +46,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    
+    protected $with=['languages','educations', 'experiences','hobbies','images','skills'];
     
     public function languages() :HasMany
 {

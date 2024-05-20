@@ -6,8 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\User;
 
 
+use App\Models\Language;
+use App\Models\Education;
+use App\Models\Experience;
+use App\Models\Hobbie;
+use App\Models\ProfileImage;
+use App\Models\Skill;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
@@ -76,10 +83,9 @@ class AuthController extends Controller
     ], 200);
 }
     
-    
 public function updateProfile(Request $request, $id)
 {
-    
+   
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255',
@@ -123,52 +129,13 @@ public function updateProfile(Request $request, $id)
         'phone_number' => $request->phone_number,
     ]);
 
-    $user->languages()->delete();
-    foreach ($validated['languages'] as $language) {
-        $user->languages()->create([
-            'name' => $language['name'],
-            'level' => $language['level']
-        ]);
-    }
+   
+    $user->languages()->sync($validated['languages']);
+    $user->educations()->sync($validated['educations']);
+    $user->experiences()->sync($validated['experiences']);
+    $user->skills()->sync($validated['skills']);
+    $user->hobbies()->sync($validated['hobbies']);
 
-    $user->educations()->delete();
-    foreach ($validated['educations'] as $education) {
-        $user->educations()->create([
-            'institution' => $education['institution'],
-            'degree' => $education['degree'],
-            'field_of_study' => $education['field_of_study'],
-            'start_date' => $education['start_date'],
-            'end_date' => $education['end_date']
-        ]);
-    }
-
-    $user->experiences()->delete();
-    foreach ($validated['experiences'] as $experience) {
-        $user->experiences()->create([
-            'company' => $experience['company'],
-            'position' => $experience['position'],
-            'description' => $experience['description'],
-            'start_date' => $experience['start_date'],
-            'end_date' => $experience['end_date']
-        ]);
-    }
-
-    $user->skills()->delete();
-    foreach ($validated['skills'] as $skill) {
-        $user->skills()->create([
-            'name' => $skill['name']
-        ]);
-    }
-
-    $user->hobbies()->delete();
-    foreach ($validated['hobbies'] as $hobby) {
-        $user->hobbies()->create([
-            'name' => $hobby['name'],
-            'description' => $hobby['description']
-        ]);
-    }
-
-    
     if ($request->hasFile('profile_images')) {
         $user->images()->delete();
         foreach ($request->file('profile_images') as $file) {
@@ -179,6 +146,8 @@ public function updateProfile(Request $request, $id)
 
     return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
 }
+
+
     
 
 }
