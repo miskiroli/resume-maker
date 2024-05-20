@@ -47,6 +47,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /*
+        bocs nem $appends hanem $with - az itt felsoroltak lesznek a json formátumú user adatokhoz 
+        hozzákapcsolva. ha nem json-ként használja az usert, akkor automatikus a hozzákapcsolás
+        protected $with = ['languages', 'educations', 'satöbbi']
+    */
     
     public function languages() :HasMany
 {
