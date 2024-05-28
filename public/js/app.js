@@ -10033,7 +10033,7 @@ var Profile = function Profile(_ref) {
     setFormData(newData);
   };
   var handleImageChange = function handleImageChange(e) {
-    var file = e.target.files[0]; // Csak az első feltöltött fájlt kezeljük
+    var file = e.target.files[0];
     var imageUrl = URL.createObjectURL(file);
     setFormData(_objectSpread(_objectSpread({}, formData), {}, {
       profile_images: [{

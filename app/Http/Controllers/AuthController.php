@@ -44,19 +44,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
-        
+    
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-          
-            $user = Auth::user();
+            $user = Auth::user()->load('languages', 'educations', 'experiences', 'hobbies', 'images', 'skills');
             return response()->json(['user' => $user]);
         } else {
-            
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
     }
@@ -79,7 +75,7 @@ class AuthController extends Controller
         'experiences' => $user->experiences,
         'hobbies' => $user->hobbies,
         'images' => $user->images,
-        'skills' => $user->skills
+        'skills' => $user->skills,
     ], 200);
 }
     

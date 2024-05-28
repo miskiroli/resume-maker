@@ -73,7 +73,7 @@ const Profile = ({ user }) => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Csak az első feltöltött fájlt kezeljük
+    const file = e.target.files[0]; 
     const imageUrl = URL.createObjectURL(file);
     setFormData({ ...formData, profile_images: [{ image_path: imageUrl }] });
   };
