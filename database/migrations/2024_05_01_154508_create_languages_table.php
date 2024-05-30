@@ -9,8 +9,8 @@ class CreateLanguagesTable extends Migration
     {
         Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Nyelv neve
-            $table->enum('level', ['beginner', 'intermediate', 'advanced']); // Nyelvtudás szintje
+            $table->string('name'); 
+            $table->enum('level', ['beginner', 'intermediate', 'advanced']); 
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 

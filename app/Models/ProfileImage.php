@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProfileImage extends Model
 {
     use HasFactory;
-    protected $fillable = ['image_path', 'user_id']; 
+    protected $fillable = ['user_id','image_path' ]; 
 
     public function user()
     {

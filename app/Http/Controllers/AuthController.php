@@ -50,7 +50,7 @@ class AuthController extends Controller
         ]);
     
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user()->load('languages', 'educations', 'experiences', 'hobbies', 'images', 'skills');
+            $user = Auth::user();
             return response()->json(['user' => $user]);
         } else {
             return response()->json(['message' => 'Invalid credentials'], 401);

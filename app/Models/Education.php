@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Education extends Model
 {
     use HasFactory;
-    protected $fillable = ['degree', 'institution','field_of_study','start_date','end_date','user_id']; // Feltételezzük, hogy ezek a Language modell töltődhetnek
+    protected $fillable = ['user_id','degree', 'institution','field_of_study','start_date','end_date']; // Feltételezzük, hogy ezek a Language modell töltődhetnek
 
     public function user()
     {

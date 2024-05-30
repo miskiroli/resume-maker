@@ -14,7 +14,9 @@ class AddProfileFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->string('phone_number')->nullable();
+            $table->string('live_place')->nullable();
+            $table->text('about_me')->nullable();
         });
     }
 
@@ -25,10 +27,10 @@ class AddProfileFieldsToUsersTable extends Migration
      */
     public function down()
     {
+
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone_number')->nullable();
-            $table->string('live_place')->nullable();
-            $table->text('about_me')->nullable();
+            $table->dropColumn(['phone_number', 'live_place', 'about_me']);
         });
+        
     }
 }

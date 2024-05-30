@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Experience extends Model
 {
     use HasFactory;
-    protected $fillable = ['company', 'position','description','start_date','end_date','user_id']; 
+    protected $fillable = ['user_id','company', 'position','description','start_date','end_date']; 
 
     public function user()
     {
