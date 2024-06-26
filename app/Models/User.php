@@ -47,29 +47,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
-    protected $with=['languages','educations', 'experiences','hobbies','images','skills'];
+    protected $with=['languages','educations', 'experiences','hobbies','profile_images','skills'];
     
-    public function languages() :HasMany
+    public function languages() 
 {
     return $this->hasMany(Language::class);
 }
-    public function educations() :HasMany
+    public function educations() 
     {
         return $this->hasMany(Education::class);
     }
-    public function experiences() :HasMany
+    public function experiences() 
     {
         return $this->hasMany(Experience::class);
     }
-    public function hobbies() :HasMany
+    public function hobbies() 
     {
         return $this->hasMany(Hobbie::class);
     }
-    public function images() :HasMany
+    public function profile_images() 
     {
         return $this->hasMany(ProfileImage::class);
     }
-    public function skills() :HasMany
+    public function skills() 
     {
         return $this->hasMany(Skill::class);
     }

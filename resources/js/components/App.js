@@ -14,8 +14,13 @@ function App() {
     const checkAuth = async () => {
       try {
         const response = await axios.get('/check-auth');
-        setAuthenticated(response.data.authenticated);
-        setUser(response.data.user);
+        if (response.data.authenticated) {
+          setAuthenticated(true);
+          const profileResponse = await axios.get('/profile');
+          setUser(profileResponse.data.user);
+        } else {
+          setAuthenticated(false);
+        }
       } catch (error) {
         console.error('Error checking authentication:', error);
       }
@@ -23,8 +28,10 @@ function App() {
 
     checkAuth();
   }, []);
-  
+
   const handleLogin = (userData) => {
+    console.log('User data on login:', userData);
+
     setUser(userData);
     setAuthenticated(true);
   }
@@ -32,14 +39,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login onLogin={handleLogin} />} />
+        <Route path="/" element={authenticated ? <Profile user={user} /> : <Login onLogin={handleLogin} />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
-        {authenticated ? (
-          <Route path="/profile" element={<Profile user={user} />} />
-        ) : (
-          <Route path="/profile" element={<Login onLogin={handleLogin} />} />
-        )}
+        <Route path="/profile" element={authenticated ? <Profile user={user} /> : <Login onLogin={handleLogin} />} />
       </Routes>
     </Router>
   );

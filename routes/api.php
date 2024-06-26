@@ -6,20 +6,20 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-
-Route::middleware('auth:sanctum')->get('/check-auth', [AuthController::class, 'checkAuth']);
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [AuthController::class, 'profile']);
-    Route::put('/profile/{id}', [AuthController::class, 'updateProfile']);
+    Route::get('/check-auth', [AuthController::class, 'checkAuth']);
+    Route::post('/updateName/{id}', [AuthController::class, 'updateName']);
+    Route::post('/updateEmail/{id}', [AuthController::class, 'updateEmail']);
+    Route::post('/updateAboutMe/{id}', [AuthController::class, 'updateAboutMe']);
+    Route::post('/updateLivePlace/{id}', [AuthController::class, 'updateLivePlace']);
+    Route::post('/updatePhoneNumber/{id}', [AuthController::class, 'updatePhoneNumber']);
+    Route::post('/updateLanguages/{id}', [AuthController::class, 'updateLanguages']);
+    Route::post('/updateEducations/{id}', [AuthController::class, 'updateEducations']);
+    Route::post('/updateExperiences/{id}', [AuthController::class, 'updateExperiences']);
+    Route::post('/updateSkills/{id}', [AuthController::class, 'updateSkills']);
+    Route::post('/updateHobbies/{id}', [AuthController::class, 'updateHobbies']);
+    Route::post('/upload/{id}', [AuthController::class, 'upload']);
 });

@@ -5,42 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 
-
-use App\Models\Language;
-use App\Models\Education;
-use App\Models\Experience;
-use App\Models\Hobbie;
-use App\Models\ProfileImage;
-use App\Models\Skill;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users|max:255',
             'password' => 'required|string|min:6',
         ]);
-    
-        
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-    
-       
+
         Auth::login($user);
-    
-       
+
         return response()->json(['user' => $user]);
     }
-    
 
     public function login(Request $request)
     {
@@ -48,7 +35,7 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-    
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             return response()->json(['user' => $user]);
@@ -57,93 +44,155 @@ class AuthController extends Controller
         }
     }
 
-    public function checkAuth(Request $request): JsonResponse
+    public function checkAuth(Request $request)
     {
         if (Auth::check()) {
             return response()->json(['authenticated' => true]);
         }
         return response()->json(['authenticated' => false], 401);
     }
+
     public function profile(Request $request)
-{
-    $user = $request->user()->load('languages', 'educations', 'experiences', 'hobbies', 'images', 'skills');
-
-    return response()->json([
-        'user' => $user,
-        'educations' => $user->educations,
-        'languages' => $user->languages,
-        'experiences' => $user->experiences,
-        'hobbies' => $user->hobbies,
-        'images' => $user->images,
-        'skills' => $user->skills,
-    ], 200);
-}
-    
-public function updateProfile(Request $request, $id)
-{
-   
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255',
-        'about_me' => 'nullable|string',
-        'live_place' => 'nullable|string|max:255',
-        'phone_number' => 'nullable|string|max:20',
-        'languages' => 'array',
-        'languages.*.name' => 'required_with:languages|string|max:255',
-        'languages.*.level' => 'required_with:languages|string|max:50',
-        'educations' => 'array',
-        'educations.*.institution' => 'required_with:educations|string|max:255',
-        'educations.*.degree' => 'required_with:educations|string|max:255',
-        'educations.*.field_of_study' => 'required_with:educations|string|max:255',
-        'educations.*.start_date' => 'required_with:educations|date',
-        'educations.*.end_date' => 'nullable|date',
-        'experiences' => 'array',
-        'experiences.*.company' => 'required_with:experiences|string|max:255',
-        'experiences.*.position' => 'required_with:experiences|string|max:255',
-        'experiences.*.description' => 'nullable|string',
-        'experiences.*.start_date' => 'required_with:experiences|date',
-        'experiences.*.end_date' => 'nullable|date',
-        'skills' => 'array',
-        'skills.*.name' => 'required_with:skills|string|max:255',
-        'hobbies' => 'array',
-        'hobbies.*.name' => 'required_with:hobbies|string|max:255',
-        'hobbies.*.description' => 'nullable|string',
-        'profile_images' => 'array',
-        'profile_images.*.image_path' => 'required_with:profile_images|string',
-    ]);
-
-    $user = User::find($id);
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
+    {
+        $user = $request->user();
+        return response()->json($user, 200);
     }
 
-    $user->update([
-        'name' => $request->name,
-        'email' => $request->email,
-        'about_me' => $request->about_me,
-        'live_place' => $request->live_place,
-        'phone_number' => $request->phone_number,
-    ]);
-
    
-    $user->languages()->sync($validated['languages']);
-    $user->educations()->sync($validated['educations']);
-    $user->experiences()->sync($validated['experiences']);
-    $user->skills()->sync($validated['skills']);
-    $user->hobbies()->sync($validated['hobbies']);
-
-    if ($request->hasFile('profile_images')) {
-        $user->images()->delete();
-        foreach ($request->file('profile_images') as $file) {
-            $path = $file->store('profile_images');
-            $user->images()->create(['image_path' => $path]);
+    public function updateName(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
         }
+        $user->name = $request->name;
+        $user->save();
+
+        return response()->json(['message' => 'Name updated successfully']);
     }
 
-    return response()->json(['message' => 'Profile updated successfully', 'user' => $user]);
+    public function updateEmail(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->email = $request->email;
+        $user->save();
+
+        return response()->json(['message' => 'Email updated successfully']);
+    }
+
+   
+    public function updateAboutMe(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->about_me = $request->about_me;
+        $user->save();
+
+        return response()->json(['message' => 'About me updated successfully']);
+   }
+    public function updateLivePlace(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->live_place = $request->live_place;
+        $user->save();
+
+        return response()->json(['message' => 'Live place updated successfully']);
+    }
+
+    public function updatePhoneNumber(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->phone_number = $request->phone_number;
+        $user->save();
+
+        return response()->json(['message' => 'Phone number updated successfully']);
+    }
+
+    public function updateLanguages(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->languages = $request->languages;
+        $user->save();
+
+        return response()->json(['message' => 'Languages updated successfully']);
+    }
+
+    public function updateEducations(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->educations = $request->educations;
+        $user->save();
+
+        return response()->json(['message' => 'Educations updated successfully']);
+    }
+
+    public function updateExperiences(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->experiences = $request->experiences;
+        $user->save();
+
+        return response()->json(['message' => 'Experiences updated successfully']);
+    }
+
+    public function updateSkills(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->skills = $request->skills;
+        $user->save();
+
+        return response()->json(['message' => 'Skills updated successfully']);
+    }
+
+    public function updateHobbies(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->hobbies = $request->hobbies;
+        $user->save();
+
+        return response()->json(['message' => 'Hobbies updated successfully']);
+    }
+
+    public function upload(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $path = $file->store('avatars', 'public');
+            $user->avatar = $path;
+            $user->save();
+        }
+
+        return response()->json(['message' => 'Avatar uploaded successfully']);
+    }
 }
 
-
-    
-
-}
